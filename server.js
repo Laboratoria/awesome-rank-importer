@@ -10,6 +10,8 @@ var io = require('socket.io')(http);
 
 var models = require('./models');
 
+app.set('port', process.env.PORT || 3000);
+
 var readXLS, writeToDatabase;
 
 io.on('connection', function (socket) {
@@ -121,6 +123,6 @@ app.post('/import', function (req, res) {
 	}
 });
 
-http.listen('3000', function () {
-	console.log('Server running on port 3000');
+http.listen(app.get('port'), function () {
+	console.log(`Server running on port ${app.get('port')}`);
 });
