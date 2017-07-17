@@ -1,0 +1,35 @@
+{
+  "name": "awesome-rank-importer",
+  "version": "1.0.0",
+  "description": "Data importer for Hackathon Tool (awesome-rank)",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Laboratoria/awesome-rank-importer.git"
+  },
+  "keywords": [
+    "awesome-rank",
+    "laboratoria"
+  ],
+  "author": "Ivan Medina <ivan@laboratoria.la>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Laboratoria/awesome-rank-importer/issues"
+  },
+  "homepage": "https://github.com/Laboratoria/awesome-rank-importer#readme",
+  "dependencies": {
+    "connect-busboy": "0.0.2",
+    "express": "^4.15.3",
+    "mysql2": "^1.3.6",
+    "sequelize": "^4.3.2",
+    "socket.io": "^2.0.3",
+    "xlsx": "^0.10.8"
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
+  }
+}

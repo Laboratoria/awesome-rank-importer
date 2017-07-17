@@ -1,0 +1,25 @@
+{
+  "development": {
+    "username": "root",
+    "password": "123456",
+    "database": "awesome_rank_development",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "root",
+    "password": null,
+    "database": "awesome_rank_test",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+		"use_env_variable": "TESTING_DB_URL"
+  },
+  "production": {
+    "username": "root",
+    "password": null,
+    "database": "awesome_rank_production",
+    "host": "127.0.0.1",
+    "dialect": "mysql",
+		"use_env_variable": "PRODUCTION_DB_URL"
+  }
+}
