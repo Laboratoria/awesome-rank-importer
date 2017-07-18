@@ -114,7 +114,7 @@ app.post('/import', function (req, res) {
 		req.busboy.on('file', function (fieldname, file, filename) {
 			var uploadDir = __dirname + '/uploads/';
 			var filePath = uploadDir + filename;
-			if (!fs.existsSync(filePath)) {
+			if (!fs.existsSync(uploadDir)) {
 				fs.mkdirSync(uploadDir);
 			}
 			stream = fs.createWriteStream(filePath);
