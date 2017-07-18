@@ -32,7 +32,7 @@ io.on('connection', function (socket) {
 					'lastname': worksheet['B' + r] ? worksheet['B' + r].v : '',
 					'company': worksheet['C' + r].v,
 					'username': worksheet['D' + r].v,
-					'password': encrypt(worksheet['E' + r].v),
+					'password': encrypt(worksheet['E' + r].v.trim()),
 					'campusId': worksheet['F' + r].v
 				};
 				var squad = {
