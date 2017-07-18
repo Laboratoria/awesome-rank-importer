@@ -9,6 +9,7 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
 var models = require('./models');
+var encrypt = require('./helper/encrypt');
 
 app.set('port', process.env.PORT || 3000);
 
@@ -31,7 +32,7 @@ io.on('connection', function (socket) {
 					'lastname': worksheet['B' + r] ? worksheet['B' + r].v : '',
 					'company': worksheet['C' + r].v,
 					'username': worksheet['D' + r].v,
-					'password': worksheet['E' + r].v,
+					'password': encrypt(worksheet['E' + r].v),
 					'campusId': worksheet['F' + r].v
 				};
 				var squad = {
