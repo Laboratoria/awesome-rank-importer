@@ -13,14 +13,14 @@ var encrypt = require('./helper/encrypt');
 
 app.set('port', process.env.PORT || 3000);
 
-var readXLS, writeToDatabase;
-
-var getCellValue = function (worksheet, column, row) {
-	return worksheet[column + row] ? worksheet[column + row].v.trim() : '';
-};
+var getCellValue, readXLS, writeToDatabase;
 
 io.on('connection', function (socket) {
 	console.log('User connected');
+
+	getCellValue = function (worksheet, column, row) {
+		return worksheet[column + row] ? worksheet[column + row].v : '';
+	};
 
 	readXLS = function (filePath, res) {
 		var workbook = xlsx.readFile(filePath);
@@ -36,7 +36,7 @@ io.on('connection', function (socket) {
 					'lastname': getCellValue(worksheet, 'B', r),
 					'company': getCellValue(worksheet, 'C', r),
 					'username': getCellValue(worksheet, 'D', r),
-					'password': encrypt(getCellValue(worksheet, 'E', r)),
+					'password': encrypt(worksheet['E' + r].v.trim()),
 					'campusId': getCellValue(worksheet, 'F', r)
 				};
 				var squad = {
