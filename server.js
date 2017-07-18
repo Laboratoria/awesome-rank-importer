@@ -15,6 +15,10 @@ app.set('port', process.env.PORT || 3000);
 
 var readXLS, writeToDatabase;
 
+var getCellValue = function (worksheet, column, row) {
+	return worksheet[column + row] ? worksheet[column + row].v.trim() : '';
+};
+
 io.on('connection', function (socket) {
 	console.log('User connected');
 
@@ -28,23 +32,23 @@ io.on('connection', function (socket) {
 		for (var r = 3; r < lastRow; r++) {
 			if (worksheet['D' + r]) {
 				var user = {
-					'name': worksheet['A' + r].v,
-					'lastname': worksheet['B' + r] ? worksheet['B' + r].v : '',
-					'company': worksheet['C' + r].v,
-					'username': worksheet['D' + r].v,
-					'password': encrypt(worksheet['E' + r].v.trim()),
-					'campusId': worksheet['F' + r].v
+					'name': getCellValue(worksheet, 'A', r),
+					'lastname': getCellValue(worksheet, 'B', r),
+					'company': getCellValue(worksheet, 'C', r),
+					'username': getCellValue(worksheet, 'D', r),
+					'password': encrypt(getCellValue(worksheet, 'E', r)),
+					'campusId': getCellValue(worksheet, 'F', r)
 				};
 				var squad = {
-					'name': worksheet['G' + r].v
+					'name': getCellValue(worksheet, 'G', r)
 				};
 				var developer = {
-					'name': worksheet['H' + r].v,
-					'lastname': worksheet['I' + r].v,
+					'name': getCellValue(worksheet, 'H', r),
+					'lastname': getCellValue(worksheet, 'I', r),
 					'age': 0,
-					'photoUrl': worksheet['K' + r].v,
-					'title': worksheet['L' + r].v,
-					'captainLink': worksheet['M' + r].v,
+					'photoUrl': getCellValue(worksheet, 'K', r),
+					'title': getCellValue(worksheet, 'L', r),
+					'captainLink': getCellValue(worksheet, 'M', r),
 					'campusId': user.campusId
 				};
 				writeToDatabase({ user, squad, developer });
