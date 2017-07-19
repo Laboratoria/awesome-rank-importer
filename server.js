@@ -13,10 +13,45 @@ var encrypt = require('./helper/encrypt');
 
 app.set('port', process.env.PORT || 3000);
 
-var getCellValue, readXLS, writeToDatabase;
+var asyncLoop,
+	getCellValue,
+	readXLS,
+	writeToDatabase;
 
 io.on('connection', function (socket) {
 	console.log('User connected');
+
+	asyncLoop = function (iterations, func, callback) {
+    var index = 0;
+    var done = false;
+    var loop = {
+        next: function() {
+            if (done) {
+                return;
+            }
+
+            if (index < iterations) {
+                index++;
+                func(loop);
+
+            } else {
+                done = true;
+                callback();
+            }
+        },
+
+        iteration: function() {
+            return index - 1;
+        },
+
+        break: function() {
+            done = true;
+            callback();
+        }
+    };
+    loop.next();
+    return loop;
+	}
 
 	getCellValue = function (worksheet, column, row) {
 		return worksheet[column + row] ? worksheet[column + row].v : '';
@@ -29,7 +64,9 @@ io.on('connection', function (socket) {
 		var lastPositionIndex = range.indexOf(':') + 2;
 		var lastRow = range.substr(lastPositionIndex);
 		socket.emit('message', 'INFO: Starting import process...');
-		for (var r = 3; r < lastRow; r++) {
+		console.log('message', 'INFO: Starting import process...');
+		asyncLoop(lastRow - 3, function (loop) {
+			var r = loop.iteration() + 3;
 			if (worksheet['D' + r]) {
 				var user = {
 					'name': getCellValue(worksheet, 'A', r),
@@ -51,14 +88,16 @@ io.on('connection', function (socket) {
 					'captainLink': getCellValue(worksheet, 'M', r),
 					'campusId': user.campusId
 				};
-				writeToDatabase({ user, squad, developer });
+				writeToDatabase({ user, squad, developer }, loop);
 			} else {
 				res.end('INFO: Data Imported');
 			}
-		}
+		}, function () {
+			console.log('INFO: Data Imported, async');
+		});
 	};
 
-	writeToDatabase = function (importEntities) {
+	writeToDatabase = function (importEntities, loop) {
 
 		var user = importEntities.user;
 		var squad = importEntities.squad;
@@ -73,7 +112,9 @@ io.on('connection', function (socket) {
 			}).spread(function (user, created) {
 				if (created) {
 					socket.emit('message', `INFO: User ${user.name} ${user.lastname} imported...`);
-				}
+
+			console.log('message', `INFO: User ${user.name} ${user.lastname} imported...`);
+		}
 				squad.userId = user.id;
 				return models.Squad.findOrCreate({
 					where: {
@@ -84,7 +125,9 @@ io.on('connection', function (socket) {
 			}).spread(function (squad, created) {
 				if (created) {
 					socket.emit('message', `INFO: Squad ${squad.name} imported...`);
-				}
+
+			console.log('message', `INFO: Squad ${squad.name} imported...`);
+		}
 				developer.squadId = squad.id;
 				return models.Developer.findOrCreate({
 					where: {
@@ -97,7 +140,10 @@ io.on('connection', function (socket) {
 			}).spread(function (developer, created) {
 				if (created) {
 					socket.emit('message', `INFO: Developer ${developer.name} ${developer.lastname} imported...`);
-				}
+
+			console.log('message', `INFO: Developer ${developer.name} ${developer.lastname} imported...`);
+		}
+				loop.next();
 			});
 		})();
 	}
